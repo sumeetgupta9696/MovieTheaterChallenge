@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -18,13 +19,33 @@ public class MovieTheaterSeatingService {
         theater = new MovieTheater();
     }
 
-    public void runService(String inputFilePath, String outputFilePath) throws IOException {
+
+    /**
+     * Function to run service for given file paths.
+     * @param inputFilePath input file path to read from
+     * @param outputFilePath output file path to write to
+     * @throws IOException
+     * @throws InvalidPathException
+     */
+    public void runService(String inputFilePath, String outputFilePath) throws IOException, InvalidPathException {
+        if (inputFilePath.isEmpty()) {
+            throw new InvalidPathException(inputFilePath, "Input file path is invalid.");
+        }
         processInputFile(inputFilePath);
         writeToOutputFile(outputFilePath);
+        if (!outputFilePath.isEmpty()) {
+            System.out.println("Output written to file: " + outputFilePath);
+        } else {
+            System.out.println("Output written to file: MovieTheaterSeating/output.txt");
+        }
     }
 
+    /**
+     * Function to process given input file path
+     * @param inputFilePath input file path to read from
+     * @throws IOException
+     */
     public void processInputFile(String inputFilePath) throws IOException {
-        System.out.println("CURRENT PATH: " + System.getProperty("user.dir"));
         List<String> lines = Files.readAllLines(Paths.get(inputFilePath));
         for (String line : lines) {
             String[] tokens = line.split(" ");
@@ -34,7 +55,15 @@ public class MovieTheaterSeatingService {
         }
     }
 
+    /**
+     * Function to write final seating arrangement
+     * @param outputFilePath output file path to write to
+     * @throws IOException
+     */
     public void writeToOutputFile(String outputFilePath) throws IOException {
+        if (outputFilePath.isEmpty()) {
+            outputFilePath = "output.txt";
+        }
         File file = new File(outputFilePath);
         BufferedWriter writer = null;
         try {
@@ -45,6 +74,11 @@ public class MovieTheaterSeatingService {
         }
     }
 
+    /**
+     * Function to allocate numSeats for a specific reservation
+     * @param reservationId The id of the reservation
+     * @param numSeats The number of seats that need to be allocated
+     */
     private void allocateSeats(String reservationId, int numSeats) {
         try {
             theater.allocateSeats(reservationId, numSeats);

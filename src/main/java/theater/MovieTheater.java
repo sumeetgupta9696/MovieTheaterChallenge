@@ -16,7 +16,7 @@ public class MovieTheater {
     private boolean printedId = false;
 
     /**
-     *
+     * Constructor to build movie theater object
      */
     public MovieTheater() {
         for (int i = 'A'; i < frontRow + ROWS; i++) {
@@ -33,6 +33,12 @@ public class MovieTheater {
         availableSeats = ROWS * SEATS_IN_ROW;
     }
 
+    /**
+     * Function to find a row with numSeats
+     * @param reservationId the id of the reservation
+     * @param numSeats the number of seats that need to be allocated
+     * @return returns whether a row was found
+     */
     public boolean findRow(String reservationId, int numSeats) {
         boolean foundRow = false;
         LinkedList<Integer> chosenRow = null;
@@ -59,6 +65,12 @@ public class MovieTheater {
         return foundRow;
     }
 
+    /**
+     * Function that adds seat for a specific reservation to final output
+     * @param rowId the row we are reserving
+     * @param reservationId the id of the reservation
+     * @param row the LinkedList that stores the row
+     */
     public void printSeat(Character rowId, String reservationId, LinkedList<Integer> row) {
         String seatNumber = String.valueOf(SEATS_IN_ROW - row.size() + 1);
         if (printedId) {
@@ -68,6 +80,10 @@ public class MovieTheater {
         }
     }
 
+    /**
+     * Removes seats from row to account for buffer
+     * @param row the LinkedList that stores the row
+     */
     public void removeBuffer(LinkedList<Integer> row) {
         // Remove buffer seats
         int bufferSeats = 0;
@@ -76,6 +92,11 @@ public class MovieTheater {
         }
     }
 
+    /**
+     * Finds any available seat starting from the back row
+     * @param reservationId the id of the reservation
+     * @param numSeats the number of seats that need to be allocated
+     */
     public void findAnySeats(String reservationId, int numSeats) {
         int seatsLeft = numSeats; // Seats left to allocate
 
@@ -103,13 +124,25 @@ public class MovieTheater {
     }
 
 
+    /**
+     * Parent function that allocates seats for a reservation
+     * @param reservationId the id of the reservation
+     * @param numSeats the number of seats that need to be allocated
+     * @throws SeatReservationException
+     */
     public void allocateSeats(String reservationId, int numSeats) throws SeatReservationException {
         if (numSeats > availableSeats) {
             throw new SeatReservationException("Not enough seats available to make reservation.");
+        } else if (numSeats == 0) {
+            throw new SeatReservationException("Can't reserve zero seats. Please try again with a number greater" +
+                    " than zero.");
         }
 
         printedId = false;
-        boolean foundRow = findRow(reservationId, numSeats);
+        boolean foundRow = false;
+        if (numSeats <= SEATS_IN_ROW) {
+            foundRow = findRow(reservationId, numSeats);
+        }
 
         if (!foundRow) {
             findAnySeats(reservationId, numSeats);
