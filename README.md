@@ -16,7 +16,7 @@
 
    **Execute both of these commands from /MovieTheaterSeating**
 
-> mvn clean
+   > mvn clean
 
    **Specify both the input and output files in the next command**
 
